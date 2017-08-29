@@ -247,10 +247,12 @@ namespace LiveCameraSample
             var jpg = frame.Image.ToMemoryStream(".jpg", s_jpegParams);
             // Submit image to API. 
             var analysis = await _visionClient.GetTagsAsync(jpg);
+            //var analysis = await _visionClient.DescribeAsync(jpg);
             // Count the API call. 
             Properties.Settings.Default.VisionAPICallCount++;
             // Output. 
             return new LiveCameraResult { Tags = analysis.Tags };
+            //return new LiveCameraResult { Descriptions = analysis.Description};
         }
 
         /// <summary> Function which submits a frame to the Computer Vision API for celebrity
@@ -298,6 +300,8 @@ namespace LiveCameraSample
 
                 visImage = Visualization.DrawFaces(visImage, result.Faces, result.EmotionScores, result.CelebrityNames);
                 visImage = Visualization.DrawTags(visImage, result.Tags);
+                //visImage = Visualization.DrawTags(visImage, result.Descriptions, "bla");
+
             }
 
             return visImage;

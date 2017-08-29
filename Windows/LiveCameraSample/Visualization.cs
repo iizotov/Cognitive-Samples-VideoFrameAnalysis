@@ -101,6 +101,34 @@ namespace LiveCameraSample
             return DrawOverlay(baseImage, drawAction);
         }
 
+        public static BitmapSource DrawTags(BitmapSource baseImage, Description[] desc, string unused)
+        {
+            if (desc == null)
+            {
+                return baseImage;
+            }
+
+            Action<DrawingContext, double> drawAction = (drawingContext, annotationScale) =>
+            {
+                double y = 0;
+                foreach (var tag in desc)
+                {
+                    // Create formatted text--in a particular font at a particular size
+                    FormattedText ft = new FormattedText(tag.Captions[0].Text,
+                        CultureInfo.CurrentCulture, FlowDirection.LeftToRight, s_typeface,
+                        42 * annotationScale, Brushes.Black);
+                    // Instead of calling DrawText (which can only draw the text in a solid colour), we
+                    // convert to geometry and use DrawGeometry, which allows us to add an outline. 
+                    var geom = ft.BuildGeometry(new Point(10 * annotationScale, y));
+                    drawingContext.DrawGeometry(s_lineBrush, new Pen(Brushes.Black, 2 * annotationScale), geom);
+                    // Move line down
+                    y += 42 * annotationScale;
+                }
+            };
+
+            return DrawOverlay(baseImage, drawAction);
+        }
+
         public static BitmapSource DrawFaces(BitmapSource baseImage, Microsoft.ProjectOxford.Face.Contract.Face[] faces, Scores[] emotionScores, string[] celebName)
         {
             if (faces == null)
